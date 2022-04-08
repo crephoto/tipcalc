@@ -1,7 +1,7 @@
 import pygame as pg
 from pygame.locals import *
 import pygame_gui
-import pygame, sys
+import sys, os
 import pygame_widgets
 import pygame_menu
 import pygame_menu.locals as _locals
@@ -17,6 +17,9 @@ clock = pg.time.Clock()
 input_box1 = pg.Rect(200, 100, 140, 32)
 button1 = pg.Rect(200, 600, 200, 32)
 button2 = pg.Rect(200, 600, 200, 32)
+percentbox = pg.Rect(200, 434, 200, 32)
+addpercent = pg.Rect(170, 415, 27, 33)
+subpercent =  pg.Rect(170, 454, 27, 33)
 back_blue = (174, 198, 207)
 color_inactive = pg.Color('purple')
 color_active = pg.Color(102, 102, 102)
@@ -25,7 +28,11 @@ color = color_inactive
 active = False
 mx, my = pg.mouse.get_pos() 
 click = False
-active = False 
+active1 = False
+meal1 = '$'
+percent = int('0')
+percent1 = str('0')
+script_dir = os.path.dirname(__file__)
 
 def draw_text(text, totfont, color, surface, x, y):
     textobj = totfont.render(text, 1, color)
@@ -34,18 +41,17 @@ def draw_text(text, totfont, color, surface, x, y):
     surface.blit(textobj, textrect)
 
 
-def main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color):
+def main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color, meal1, percent, percent1):
     pg.font.init()
     mx, my = pg.mouse.get_pos()
     click = False
     active = False
-    meal1 = '$'
 
     running = True
     while running:
-    
+
         draw_text(("person 1:"), but_font, (255, 255, 255), window_surface, 150, 105)
-        
+
         #inputbox1(meal1)
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -69,8 +75,22 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
             if event.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 if button1.collidepoint(mouse_pos):
+                    running = False
                     cal(meal1)
-                    pg.quit(main)
+            # percent amount box
+            if event.type == pg.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                if addpercent.collidepoint(mouse_pos):
+                    percent = (percent + 5)
+                    percent1 = str(percent)
+                    pg.display.update()
+            if event.type == pg.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                if subpercent.collidepoint(mouse_pos):
+                    percent = (percent - 5)
+                    percent1 = str(percent)
+                    pg.display.update()
+                    
 
         window_surface.fill(back_blue)
         txt_surface = type_font.render(meal1, True, color)
@@ -82,7 +102,18 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
         # Total Button Designs
         pg.draw.rect (window_surface, (255, 127, 80), button1)
         draw_text(("Total"), but_font, (255, 255, 255), window_surface, 275, 605)
-        
+        # percent picker
+        image = pg.image.load(script_dir+"/breath.png")
+        window_surface.blit(image, (135, 400))
+            # check hit boxes add and subtract arrows
+        #pg.draw.rect(window_surface, color, addpercent, 2)
+        #pg.draw.rect(window_surface, color, subpercent, 2)
+
+            # percent box
+        pg.draw.rect(window_surface, color, percentbox, 2)
+        draw_text((percent1), type_font, (0, 0, 255), window_surface, 283, 439)
+
+
         pg.display.update()
         clock.tick()
 
@@ -106,8 +137,9 @@ def cal(meal1):
             if event.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 if button2.collidepoint(mouse_pos):
-                    main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color)
-                    pg.quit(cal)
+                    running = False
+                    main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color, meal1, percent, percent1)
+                    
                     
 
             pg.display.update()
@@ -115,5 +147,5 @@ def cal(meal1):
 
 if __name__ == '__main__':
     pg.init()
-    main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color)
+    main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color, meal1, percent, percent1)
     pg.quit()
