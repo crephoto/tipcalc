@@ -12,6 +12,7 @@ pg.font.init()
 type_font = pg.font.SysFont(None, 35)
 but_font = pg.font.SysFont(None, 35)
 per_font = pg.font.SysFont('inkfree', 30)
+per_font2 = pg.font.SysFont('inkfree', 24)
 totfont = pg.font.SysFont(None, 50)
 clock = pg.time.Clock()
 input_box1 = pg.Rect(200, 100, 140, 32)
@@ -29,18 +30,19 @@ active = False
 mx, my = pg.mouse.get_pos() 
 click = False
 active1 = False
-meal1 = '$'
-percent = int('0')
-percent1 = str('0')
+meal1 = ('')
+percent = 20
+percent1 = str('20')
 script_dir = os.path.dirname(__file__)
 
+# easy way to add text onto the window
 def draw_text(text, totfont, color, surface, x, y):
     textobj = totfont.render(text, 1, color)
     textrect = textobj.get_rect()
     textrect = topleft = (x, y)
     surface.blit(textobj, textrect)
 
-
+# first window pop up
 def main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color, meal1, percent, percent1):
     pg.font.init()
     mx, my = pg.mouse.get_pos()
@@ -83,14 +85,11 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
                 if addpercent.collidepoint(mouse_pos):
                     percent = (percent + 5)
                     percent1 = str(percent)
-                    pg.display.update()
             if event.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 if subpercent.collidepoint(mouse_pos):
                     percent = (percent - 5)
                     percent1 = str(percent)
-                    pg.display.update()
-                    
 
         window_surface.fill(back_blue)
         txt_surface = type_font.render(meal1, True, color)
@@ -98,35 +97,47 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
         input_box1.w = width
         window_surface.blit(txt_surface, (input_box1.x+5, input_box1.y+5))
         pg.draw.rect(window_surface, color, input_box1, 2)
-        draw_text(("Person A:"), per_font, (255, 255, 255), window_surface, 70, 95)
+        draw_text(("Meal Price ($):"), per_font, (255, 255, 255), window_surface, 15, 95)
+        
         # Total Button Designs
         pg.draw.rect (window_surface, (255, 127, 80), button1)
         draw_text(("Total"), but_font, (255, 255, 255), window_surface, 275, 605)
+        
         # percent picker
         image = pg.image.load(script_dir+"/breath.png")
         window_surface.blit(image, (135, 400))
-            # check hit boxes add and subtract arrows
+            
+            # check hit boxes add and subtract arrows (uncomment to check)
         #pg.draw.rect(window_surface, color, addpercent, 2)
         #pg.draw.rect(window_surface, color, subpercent, 2)
-
+            
             # percent box
         pg.draw.rect(window_surface, color, percentbox, 2)
         draw_text((percent1), type_font, (0, 0, 255), window_surface, 283, 439)
-
+        draw_text(("Tip amount (%):"), per_font2, (255, 255, 255), window_surface, 3, 439)
 
         pg.display.update()
         clock.tick()
 
 
-
+# second window pop up
 def cal(meal1):
 
     running = True
     while running:
 
         window_surface.fill(back_blue)
-
-        draw_text(meal1, totfont, (255, 255, 255), window_surface, 20, 20)
+        
+        # mathy Stuff
+        fin_meal = meal1
+        fin_meal = float(fin_meal)
+        final_percent = percent/100.0
+        add_percent = fin_meal*final_percent
+        final_price = (add_percent + fin_meal)
+        print_price = round(final_price, 2)
+        fin_print = '$' + str(print_price)
+       
+        draw_text(fin_print, totfont, (255, 255, 255), window_surface, 20, 20)
 
         # Back Button
         pg.draw.rect (window_surface, (255, 127, 80), button2)
@@ -140,8 +151,6 @@ def cal(meal1):
                     running = False
                     main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color, meal1, percent, percent1)
                     
-                    
-
             pg.display.update()
             clock.tick()
 
