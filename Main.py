@@ -48,6 +48,8 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
     mx, my = pg.mouse.get_pos()
     click = False
     active = False
+    percent1 = percent
+    percent1 = str(percent1)
 
     running = True
     while running:
@@ -78,7 +80,7 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
                 mouse_pos = event.pos
                 if button1.collidepoint(mouse_pos):
                     running = False
-                    cal(meal1)
+                    cal(meal1, percent)
             # percent amount box
             if event.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
@@ -121,11 +123,11 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
 
 
 # second window pop up
-def cal(meal1):
+def cal(meal1, percent):
 
     running = True
     while running:
-
+        
         window_surface.fill(back_blue)
         
         # mathy Stuff
@@ -136,9 +138,7 @@ def cal(meal1):
         final_price = (add_percent + fin_meal)
         print_price = round(final_price, 2)
         fin_print = '$' + str(print_price)
-       
-        draw_text(fin_print, totfont, (255, 255, 255), window_surface, 20, 20)
-
+        
         # Back Button
         pg.draw.rect (window_surface, (255, 127, 80), button2)
         draw_text(("Back"), but_font, (255, 255, 255), window_surface, 275, 605)
@@ -150,9 +150,20 @@ def cal(meal1):
                 if button2.collidepoint(mouse_pos):
                     running = False
                     main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color, meal1, percent, percent1)
-                    
-            pg.display.update()
-            clock.tick()
+        
+        # checking percent
+        meal = meal1
+        meal = int(meal)
+        if percent > 0:
+            if meal >= 0:
+                draw_text(fin_print, totfont, (255, 255, 255), window_surface, 20, 20)
+            else:
+                draw_text("Error price amount is invalid", totfont, (255, 255, 255), window_surface, 20, 20) 
+        else:
+            draw_text("Error percent amount is invalid", totfont, (255, 255, 255), window_surface, 20, 20) 
+
+        pg.display.update()
+        clock.tick()
 
 if __name__ == '__main__':
     pg.init()
