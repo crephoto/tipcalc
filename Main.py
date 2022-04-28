@@ -42,6 +42,14 @@ def draw_text(text, totfont, color, surface, x, y):
     textrect = topleft = (x, y)
     surface.blit(textobj, textrect)
 
+# checking for alpha
+def isfloat(num):
+    try:
+        float(num)
+        return True
+    except ValueError:
+        return False
+
 # first window pop up
 def main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color, meal1, percent, percent1):
     pg.font.init()
@@ -92,7 +100,6 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
                 if subpercent.collidepoint(mouse_pos):
                     percent = (percent - 5)
                     percent1 = str(percent)
-
         window_surface.fill(back_blue)
         txt_surface = type_font.render(meal1, True, color)
         width = max(200, txt_surface.get_width()+10)
@@ -102,6 +109,7 @@ def main(type_font, clock, input_box1, color_inactive, color_active, color_inval
         draw_text(("Meal Price ($):"), per_font, (255, 255, 255), window_surface, 15, 95)
         
         # Total Button Designs
+        
         pg.draw.rect (window_surface, (255, 127, 80), button1)
         draw_text(("Total"), but_font, (255, 255, 255), window_surface, 275, 605)
         
@@ -130,15 +138,29 @@ def cal(meal1, percent):
         
         window_surface.fill(back_blue)
         
-        # mathy Stuff
-        fin_meal = meal1
-        fin_meal = float(fin_meal)
-        final_percent = percent/100.0
-        add_percent = fin_meal*final_percent
-        final_price = (add_percent + fin_meal)
-        print_price = round(final_price, 2)
-        fin_print = '$' + str(print_price)
-        
+        # checking percent
+        if isfloat(meal1) == False:
+            draw_text("Error please enter a valid number", totfont, (255, 255, 255), window_surface, 20, 20)
+        else:
+            # mathy Stuff
+            fin_meal = meal1
+            fin_meal = float(fin_meal)
+            final_percent = percent/100.0
+            add_percent = fin_meal*final_percent
+            final_price = (add_percent + fin_meal)
+            print_price = round(final_price, 2)
+            fin_print = '$' + str(print_price)
+
+            meal = meal1
+            meal = float(meal)
+            if percent > 0:
+                if meal >= 0:
+                    draw_text(fin_print, totfont, (255, 255, 255), window_surface, 20, 20)
+                else:
+                    draw_text("Error price amount is invalid", totfont, (255, 255, 255), window_surface, 20, 20) 
+            else:
+                draw_text("Error percent amount is invalid", totfont, (255, 255, 255), window_surface, 20, 20)
+
         # Back Button
         pg.draw.rect (window_surface, (255, 127, 80), button2)
         draw_text(("Back"), but_font, (255, 255, 255), window_surface, 275, 605)
@@ -152,15 +174,7 @@ def cal(meal1, percent):
                     main(type_font, clock, input_box1, color_inactive, color_active, color_invalid, color, meal1, percent, percent1)
         
         # checking percent
-        meal = meal1
-        meal = int(meal)
-        if percent > 0:
-            if meal >= 0:
-                draw_text(fin_print, totfont, (255, 255, 255), window_surface, 20, 20)
-            else:
-                draw_text("Error price amount is invalid", totfont, (255, 255, 255), window_surface, 20, 20) 
-        else:
-            draw_text("Error percent amount is invalid", totfont, (255, 255, 255), window_surface, 20, 20) 
+        
 
         pg.display.update()
         clock.tick()
